@@ -47,5 +47,21 @@ EOT
     quantity           = optional(number)
     tax_rates          = optional(list(string))
   }))
+  validation {
+    condition = alltrue([
+      for k, v in var.subscription_items : (
+        v.payment_behavior == null || (contains(["allow_incomplete", "default_incomplete", "error_if_incomplete", "pending_if_incomplete"], v.payment_behavior))
+      )
+    ])
+    error_message = "must be one of: \"allow_incomplete\", \"default_incomplete\", \"error_if_incomplete\", \"pending_if_incomplete\""
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.subscription_items : (
+        v.proration_behavior == null || (contains(["always_invoice", "create_prorations", "none"], v.proration_behavior))
+      )
+    ])
+    error_message = "must be one of: \"always_invoice\", \"create_prorations\", \"none\""
+  }
 }
 
